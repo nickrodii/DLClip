@@ -1,0 +1,24 @@
+﻿<Window x:Class="DLClip.SetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DLClip"
+        mc:Ignorable="d"
+        Title="DLClip Setup" Height="300" Width="400" ResizeMode="NoResize" Topmost="True">
+    <Grid Width="400" Height="300">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label Content="FFmpeg Installation Folder" HorizontalAlignment="Left" Margin="11,59,0,0" VerticalAlignment="Top" Height="26" Width="150"/>
+        <TextBox x:Name="ffmpegPathText2" HorizontalAlignment="Left" Margin="7,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="268" Height="30" FontSize="14" VerticalContentAlignment="Center"/>
+        <Button x:Name="chooseFfmpegButton2" Content="Choose Folder..." HorizontalAlignment="Left" Margin="280,85,0,0" VerticalAlignment="Top" Width="98" Height="30" Click="chooseFfmpegButton_Click"/>
+        <Label Content="yt-dlp Installation Folder" HorizontalAlignment="Left" Margin="11,122,0,0" VerticalAlignment="Top" Height="26" Width="140"/>
+        <TextBox x:Name="ytdlpPathText2" HorizontalAlignment="Left" Margin="7,148,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="268" Height="30" TextChanged="ytdlpPathText_TextChanged" FontSize="14" VerticalContentAlignment="Center"/>
+        <Button x:Name="chooseYtdlpButton2" Content="Choose Folder..." HorizontalAlignment="Left" Margin="280,148,0,0" VerticalAlignment="Top" Width="98" Height="30" Click="chooseYtdlpButton_Click"/>
+        <Button x:Name="settingsApplyButton2" Content="Finish" HorizontalAlignment="Left" Margin="288,215,0,0" VerticalAlignment="Top" Height="31" Width="80" Click="settingsApplyButton_Click"/>
+        <Label Content="(yt-dlp installation is not required, but importing from URL will be disabled.)" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" FontSize="9" Foreground="#FF8A8A8A"/>
+        <Label Content="Welcome to DLClip. This program requires that you have FFmpeg installed (and &#xD;&#xA;optionally yt-dlp). Without FFmpeg, the program will not run properly." HorizontalAlignment="Left" Margin="7,0,0,0" VerticalAlignment="Top" Height="59" FontSize="10" Width="383" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+    </Grid>
+</Window>

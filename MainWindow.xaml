@@ -17,34 +17,35 @@
             <Grid HorizontalAlignment="Left" Height="152" Margin="10,0,0,0" VerticalAlignment="Top" Width="355">
                 <TextBox x:Name="inputText" HorizontalAlignment="Center" Height="23" Margin="0,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="335" VerticalContentAlignment="Center"/>
                 <Label Content="Input File Location" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
-                <Button x:Name="chooseFileButton" Content="Choose File..." HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top" Width="108" Height="23"/>
+                <Button x:Name="chooseFileButton" Content="Choose File..." HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top" Width="108" Height="23" Click="chooseFileButton_Click"/>
                 <CheckBox x:Name="useURLCheckbox" Content="Import From URL" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Height="18" Width="133"/>
-                <CheckBox x:Name="extractAudioButton" Content="Extract Audio" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Width="94" Checked="CheckBox_Checked_1"/>
-                <Button x:Name="submitURLButton" Content="Submit" HorizontalAlignment="Left" Margin="237,53,0,0" VerticalAlignment="Top" Width="108" Height="23"/>
+                <CheckBox x:Name="extractAudioCheckbox" Content="Extract Audio" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Width="94" Checked="CheckBox_Checked_1"/>
+                <Button x:Name="loadButton" Content="Load Media" HorizontalAlignment="Left" Margin="237,53,0,0" VerticalAlignment="Top" Width="108" Height="23" Click="loadButton_Click"/>
                 <Label Content="Format detected:" HorizontalAlignment="Left" Margin="214,122,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="inputFormatLabel" Content="N/A" HorizontalAlignment="Left" Margin="314,122,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.656,0.536"/>
+                <Label x:Name="loadedLabel" Content="Not loaded yet..." HorizontalAlignment="Left" Margin="229,70,0,0" VerticalAlignment="Top" Foreground="#FFA0A0A0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="126"/>
             </Grid>
         </GroupBox>
         <GroupBox Header="Trim Length" Margin="405,3,10,8" Grid.Row="1">
             <Grid HorizontalAlignment="Left" Height="152" Margin="10,0,0,0" VerticalAlignment="Top" Width="355">
-                <Slider x:Name="startTimeSlider" HorizontalAlignment="Center" Margin="0,76,0,0" VerticalAlignment="Top" Width="335"/>
+                <Slider x:Name="startTimeSlider" HorizontalAlignment="Center" Margin="0,76,0,0" VerticalAlignment="Top" Width="335" IsEnabled="False"/>
                 <Label Content="Length: " HorizontalAlignment="Left" Margin="124,10,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="inputLengthLabel" Content="N/A" HorizontalAlignment="Left" Margin="168,10,0,0" VerticalAlignment="Top" Width="68"/>
                 <Label Content="Start Time:" HorizontalAlignment="Left" Margin="97,50,0,0" VerticalAlignment="Top"/>
-                <TextBox x:Name="startTime" HorizontalAlignment="Left" Margin="168,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="65" Text="00:00:00" HorizontalContentAlignment="Center"/>
-                <Slider x:Name="endTimeSlider" HorizontalAlignment="Center" Margin="0,126,0,0" VerticalAlignment="Top" Width="335"/>
+                <TextBox x:Name="startTime" HorizontalAlignment="Left" Margin="168,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="65" Text="00:00:00" HorizontalContentAlignment="Center" IsEnabled="False"/>
+                <Slider x:Name="endTimeSlider" HorizontalAlignment="Center" Margin="0,126,0,0" VerticalAlignment="Top" Width="335" IsEnabled="False"/>
                 <Label Content="End Time:" HorizontalAlignment="Left" Margin="97,100,0,0" VerticalAlignment="Top"/>
-                <TextBox x:Name="endTime" HorizontalAlignment="Left" Margin="168,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="65" Text="99:99:99" HorizontalContentAlignment="Center"/>
+                <TextBox x:Name="endTime" HorizontalAlignment="Left" Margin="168,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="65" Text="99:99:99" HorizontalContentAlignment="Center" IsEnabled="False"/>
             </Grid>
         </GroupBox>
         <GroupBox Header="Video Options" Margin="10,11,400,10" Grid.Row="2">
             <Grid HorizontalAlignment="Left" Height="152" Margin="10,0,0,0" VerticalAlignment="Top" Width="355">
                 <Label Content="Resolution" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="97"/>
-                <ComboBox x:Name="resolutionSelections" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="120"/>
+                <ComboBox x:Name="resolutionSelections" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
                 <Label Content="FPS" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="97"/>
-                <ComboBox x:Name="resolutionSelections_Copy" HorizontalAlignment="Left" Margin="135,36,0,0" VerticalAlignment="Top" Width="97"/>
+                <ComboBox x:Name="FPSSelections" HorizontalAlignment="Left" Margin="135,36,0,0" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
                 <Label Content="Bitrate" HorizontalAlignment="Left" Margin="237,10,0,0" VerticalAlignment="Top" Width="97"/>
-                <ComboBox x:Name="resolutionSelections_Copy1" HorizontalAlignment="Left" Margin="237,36,0,0" VerticalAlignment="Top" Width="97"/>
+                <ComboBox x:Name="bitrateSelections" HorizontalAlignment="Left" Margin="237,36,0,0" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
                 <TextBox x:Name="customResX" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="48" IsEnabled="False"/>
                 <TextBox x:Name="customResY" HorizontalAlignment="Left" Margin="82,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="48" IsEnabled="False"/>
                 <Label Content="x" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Center" Height="32" Width="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -54,19 +55,25 @@
                 <Label Content="kbps" HorizontalAlignment="Left" Margin="310,0,0,0" VerticalAlignment="Center"/>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Format Conversion" Margin="405,11,10,10" Grid.Row="2">
+        <GroupBox Header="Output" Margin="405,11,10,10" Grid.Row="2">
             <Grid HorizontalAlignment="Left" Height="152" Margin="10,0,0,0" VerticalAlignment="Top" Width="355">
-                <Label Content="Conversion Format" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top"/>
-                <ComboBox x:Name="formatSelections" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" Width="119"/>
-                <Label Content="Codec" HorizontalAlignment="Left" Margin="226,16,0,0" VerticalAlignment="Top"/>
-                <ComboBox x:Name="codecSelections" HorizontalAlignment="Left" Margin="226,42,0,0" VerticalAlignment="Top" Width="119"/>
+                <Label Content="Conversion Format" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="formatSelections" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="119" IsEnabled="False"/>
+                <Label Content="Codec" HorizontalAlignment="Left" Margin="226,9,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="codecSelections" HorizontalAlignment="Left" Margin="226,35,0,0" VerticalAlignment="Top" Width="119" IsEnabled="False"/>
+                <TextBox x:Name="folderText" HorizontalAlignment="Center" Height="23" Margin="0,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="121" VerticalContentAlignment="Center"/>
+                <Label Content="Output File Folder" HorizontalAlignment="Left" Margin="5,73,0,0" VerticalAlignment="Top"/>
+                <Button x:Name="chooseFolderButton" Content="Choose Folder..." HorizontalAlignment="Left" Margin="243,76,0,0" VerticalAlignment="Top" Width="102" Height="23"/>
+                <TextBox x:Name="filenameText" HorizontalAlignment="Left" Height="23" Margin="73,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="231" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <Label Content="File Name" HorizontalAlignment="Left" Margin="5,110,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="fileExtensionLabel" Content=".###" HorizontalAlignment="Left" Margin="304,110,0,0" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
         <Label Content="Welcome to DLClip" HorizontalAlignment="Center" Margin="0,9,0,0" VerticalAlignment="Top" FontSize="20" Height="37" Width="178"/>
-        <Button x:Name="settingsButton" Content="Settings" HorizontalAlignment="Left" Margin="691,0,0,0" VerticalAlignment="Center" Width="73" Height="20"/>
+        <Button x:Name="settingsButton" Content="Settings" HorizontalAlignment="Left" Margin="691,0,0,0" VerticalAlignment="Center" Width="73" Height="20" Click="settingsButton_Click"/>
         <Label Content="Estimated File Size:" HorizontalAlignment="Left" Margin="13,11,0,0" Grid.Row="3" VerticalAlignment="Top" Height="26" Width="110"/>
-        <Label Content="N/A" HorizontalAlignment="Left" Margin="123,11,0,0" Grid.Row="3" VerticalAlignment="Top" Width="60" FontWeight="Bold" Height="26"/>
-        <Button x:Name="runButton" Content="Run" HorizontalAlignment="Left" Margin="611,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="30" Width="153" FontSize="16"/>
-        <ProgressBar HorizontalAlignment="Left" Height="30" Margin="183,10,0,0" Grid.Row="3" VerticalAlignment="Top" Width="412"/>
+        <Label x:Name="estimatedSizeLabel" Content="N/A" HorizontalAlignment="Left" Margin="123,11,0,0" Grid.Row="3" VerticalAlignment="Top" Width="60" FontWeight="Bold" Height="26"/>
+        <Button x:Name="runButton" Content="Run" HorizontalAlignment="Left" Margin="611,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="30" Width="153" FontSize="16" IsEnabled="False"/>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="30" Margin="183,10,0,0" Grid.Row="3" VerticalAlignment="Top" Width="412"/>
     </Grid>
 </Window>
