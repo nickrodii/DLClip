@@ -27,7 +27,6 @@ namespace DLClip
 
         bool isVideo;
         bool isLoaded = false;
-        bool usingURL;
         bool isAudioOnly;
 
         public MainWindow()
@@ -39,15 +38,8 @@ namespace DLClip
             var app = ((App)Application.Current);
 
             await app.RefreshToolStatusAsync();
-            if (!app.YtdlpOk)
-            {
-                useURLCheckbox.IsChecked = false;
-                useURLCheckbox.IsEnabled = false;
-            }
-            else
-            {
-                useURLCheckbox.IsEnabled = true;
-            }
+            UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, isLoaded, app.YtdlpOk);
+
             if (!app.FfmpegOk || !app.FfprobeOk)
             {
                 bool ok = await app.ForceSetupAsync();
@@ -57,11 +49,6 @@ namespace DLClip
                     return;
                 }
             }
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            usingURL = useURLCheckbox.IsChecked == true;
         }
 
         private void CheckBox_Checked_1(object sender, RoutedEventArgs e)
@@ -89,6 +76,7 @@ namespace DLClip
 
         private async void loadButton_Click(object sender, RoutedEventArgs e)
         {
+            bool usingURL = (useURLCheckbox.IsChecked == true);
             var app = ((App)Application.Current);
 
             if (!isLoaded)
@@ -121,9 +109,8 @@ namespace DLClip
                 {
                     if (!app.YtdlpOk)
                     {
-                        MessageBox.Show("yt-dlp is not working properly. Please reinstall yt-dlp to import from URL.", "CLI Tools Error");
-                        useURLCheckbox.IsChecked = false;
-                        useURLCheckbox.IsEnabled = false;
+                        MessageBox.Show("yt-dlp is not working properly. Please reinstall yt-dlp to import from URL.", "Error: Executable not running properly");
+                        UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, false, false);
                         return;
                     }
                 }
@@ -132,7 +119,7 @@ namespace DLClip
 
                 inputText.IsEnabled = false;
                 chooseFileButton.IsEnabled = false;
-                useURLCheckbox.IsEnabled = false;
+                UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, true, app.YtdlpOk);
                 extractAudioCheckbox.IsEnabled = false;
                 loadButton.Content = "Unload Media";
 
@@ -164,7 +151,7 @@ namespace DLClip
                 inputText.IsEnabled = true;
                 chooseFileButton.IsEnabled = true;
                 await app.RefreshToolStatusAsync();
-                if (app.YtdlpOk) { useURLCheckbox.IsEnabled = true; }
+                UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, false, app.YtdlpOk);
                 extractAudioCheckbox.IsEnabled = true;
                 loadButton.Content = "Load Media";
 
@@ -190,7 +177,7 @@ namespace DLClip
 
         }
 
-        private async void settingsButton_Click(object sender, object e)
+        private async void settingsButton_Click(object sender, RoutedEventArgs e)
         {
             var app = ((App)Application.Current);
 
@@ -208,18 +195,7 @@ namespace DLClip
                         return;
                     }
                 }
-                if (!app.YtdlpOk)
-                {
-                    useURLCheckbox.IsChecked = false;
-                    useURLCheckbox.IsEnabled = false;
-                }
-                else
-                {
-                    if (loadedLabel.Content.Equals("Not loaded yet..."))
-                    {
-                        useURLCheckbox.IsEnabled = true;
-                    }
-                }
+                UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, isLoaded, app.YtdlpOk);
             }
         }
     }

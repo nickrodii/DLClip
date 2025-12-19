@@ -5,20 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DLClip"
         mc:Ignorable="d"
-        Title="DLClip Setup" Height="300" Width="400" ResizeMode="NoResize" Topmost="True">
-    <Grid Width="400" Height="300">
+        Title="DLClip Setup" Height="397" Width="600" ResizeMode="NoResize" Topmost="True">
+    <Grid Width="600" Height="395" ShowGridLines="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Label Content="FFmpeg Installation Folder" HorizontalAlignment="Left" Margin="11,59,0,0" VerticalAlignment="Top" Height="26" Width="150"/>
-        <TextBox x:Name="ffmpegPathText2" HorizontalAlignment="Left" Margin="7,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="268" Height="30" FontSize="14" VerticalContentAlignment="Center"/>
-        <Button x:Name="chooseFfmpegButton2" Content="Choose Folder..." HorizontalAlignment="Left" Margin="280,85,0,0" VerticalAlignment="Top" Width="98" Height="30" Click="chooseFfmpegButton_Click"/>
-        <Label Content="yt-dlp Installation Folder" HorizontalAlignment="Left" Margin="11,122,0,0" VerticalAlignment="Top" Height="26" Width="140"/>
-        <TextBox x:Name="ytdlpPathText2" HorizontalAlignment="Left" Margin="7,148,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="268" Height="30" TextChanged="ytdlpPathText_TextChanged" FontSize="14" VerticalContentAlignment="Center"/>
-        <Button x:Name="chooseYtdlpButton2" Content="Choose Folder..." HorizontalAlignment="Left" Margin="280,148,0,0" VerticalAlignment="Top" Width="98" Height="30" Click="chooseYtdlpButton_Click"/>
-        <Button x:Name="settingsApplyButton2" Content="Finish" HorizontalAlignment="Left" Margin="288,215,0,0" VerticalAlignment="Top" Height="31" Width="80" Click="settingsApplyButton_Click"/>
-        <Label Content="(yt-dlp installation is not required, but importing from URL will be disabled.)" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" FontSize="9" Foreground="#FF8A8A8A"/>
-        <Label Content="Welcome to DLClip. This program requires that you have FFmpeg installed (and &#xD;&#xA;optionally yt-dlp). Without FFmpeg, the program will not run properly." HorizontalAlignment="Left" Margin="7,0,0,0" VerticalAlignment="Top" Height="59" FontSize="10" Width="383" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label Content="FFmpeg Installation Folder" HorizontalAlignment="Left" Margin="35,121,0,0" VerticalAlignment="Top" Height="26" Width="150"/>
+        <TextBox x:Name="ffmpegPathText2" HorizontalAlignment="Left"  TextWrapping="Wrap" VerticalAlignment="Top" Width="268" Height="30" FontSize="14" VerticalContentAlignment="Center" Margin="38,147,0,0"/>
+        <Button x:Name="chooseFfmpegButton2" Content="Choose Folder..." HorizontalAlignment="Left" Margin="312,147,0,0" VerticalAlignment="Top" Width="98" Height="30" Click="chooseFfmpegButton_Click"/>
+        <Label Content="yt-dlp Installation Folder" HorizontalAlignment="Left"  VerticalAlignment="Top" Height="26" Width="140" Margin="38,189,0,0"/>
+        <TextBox x:Name="ytdlpPathText2" HorizontalAlignment="Left"  TextWrapping="Wrap" VerticalAlignment="Top" Width="268" Height="30" TextChanged="ytdlpPathText_TextChanged" FontSize="14" VerticalContentAlignment="Center" Margin="38,215,0,0"/>
+        <Button x:Name="chooseYtdlpButton2" Content="Choose Folder..." HorizontalAlignment="Left" Margin="312,215,0,0" VerticalAlignment="Top" Width="98" Height="30" Click="chooseYtdlpButton_Click"/>
+        <Button x:Name="settingsApplyButton2" Content="Finish" HorizontalAlignment="Center" Margin="0,291,0,0" VerticalAlignment="Top" Height="39" Width="156" Click="settingsApplyButton_Click"/>
+        <Label Content="(yt-dlp installation is not required, but importing from URL will be disabled.)" HorizontalAlignment="Left"  VerticalAlignment="Top" FontSize="9" Foreground="#FF8A8A8A" Margin="38,243,0,0"/>
+        <Label Content="Thank you for downloading my program! This program requires that you have FFmpeg&#xD;&#xA;  installed (and optionally yt-dlp). Without FFmpeg, the program will not run properly." HorizontalAlignment="Center" Margin="0,38,0,0" VerticalAlignment="Top" Height="59" FontSize="10" Width="405" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Button x:Name="ffmpegDownloadButton" Content="Download FFmpeg" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="117" Height="36" Click="Button_Click" Margin="444,143,0,0"/>
+        <Button x:Name="ytdlpDownloadButton" Content="Download yt-dlp" HorizontalAlignment="Left" Margin="444,211,0,0" VerticalAlignment="Top" Width="117" Height="36" Click="ytdlpDownloadButton_Click"/>
+        <Label Content="Welcome to DLClip" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Button HorizontalAlignment="Left" Margin="444,180,0,0" VerticalAlignment="Top" Width="117" Background="{x:Null}" BorderBrush="{x:Null}" Height="22" Foreground="{x:Null}">
+            <TextBlock TextWrapping="Wrap" Text="How to download" Width="95" HorizontalAlignment="Left" VerticalAlignment="Center" TextDecorations="Underline" Cursor="Help" Foreground="#FF698DFF"/>
+        </Button>
+        <Button HorizontalAlignment="Left" Margin="444,247,0,0" VerticalAlignment="Top" Width="117" Background="{x:Null}" BorderBrush="{x:Null}" Height="22" Foreground="{x:Null}">
+            <TextBlock TextWrapping="Wrap" Text="How to download" Width="95" HorizontalAlignment="Left" VerticalAlignment="Center" TextDecorations="Underline" Cursor="Help" Foreground="#FF698DFF"/>
+        </Button>
 
     </Grid>
 </Window>

@@ -19,7 +19,7 @@
                 <TextBox x:Name="inputText" HorizontalAlignment="Center" Height="23" Margin="0,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="335" VerticalContentAlignment="Center"/>
                 <Label Content="Input File Location" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="chooseFileButton" Content="Choose File..." HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top" Width="108" Height="23" Click="chooseFileButton_Click"/>
-                <CheckBox x:Name="useURLCheckbox" Content="Import From URL" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Height="18" Width="133"/>
+                <CheckBox x:Name="useURLCheckbox" Content="Import From URL" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" Height="18" Width="133"/>
                 <CheckBox x:Name="extractAudioCheckbox" Content="Extract Audio" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Width="94" Checked="CheckBox_Checked_1"/>
                 <Button x:Name="loadButton" Content="Load Media" HorizontalAlignment="Left" Margin="237,53,0,0" VerticalAlignment="Top" Width="108" Height="23" Click="loadButton_Click"/>
                 <Label Content="Format detected:" HorizontalAlignment="Left" Margin="214,122,0,0" VerticalAlignment="Top"/>

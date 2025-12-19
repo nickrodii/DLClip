@@ -13,28 +13,22 @@ namespace DLClip.Utils
         
        
         
-        public static async Task<bool> IsFfmpegOk()
+        public static async Task<bool> IsFfmpegOk(string rootPath)
         {
-            string ffmpegExe = Path.Combine(Settings.Default.ffmpegPathText, "bin", "ffmpeg.exe");
+            string ffmpegExe = Path.Combine(rootPath, "bin", "ffmpeg.exe");
 
-            if (!Directory.Exists(Settings.Default.ffmpegPathText) || !File.Exists(ffmpegExe))
+            if (!File.Exists(ffmpegExe))
             {
                 return false;
             }
             
             ProbeResult result = await RunProbe(ffmpegExe, "-version", 2000);
-            if (result.TimedOut == false && result.ExitCode == 0 && result.StdOut.Contains("ffmpeg version"))
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
+            return result.TimedOut == false && result.ExitCode == 0 && result.StdOut.Contains("ffmpeg version");
         }
 
-        public static async Task<bool> IsFfprobeOk()
+        public static async Task<bool> IsFfprobeOk(string rootPath)
         {
-            string ffprobeExe = Path.Combine(Settings.Default.ffmpegPathText, "bin", "ffprobe.exe");
+            string ffprobeExe = Path.Combine(rootPath, "bin", "ffprobe.exe");
 
             if (!File.Exists(ffprobeExe))
             {
@@ -42,34 +36,20 @@ namespace DLClip.Utils
             }
 
             ProbeResult result = await RunProbe(ffprobeExe, "-version", 2000);
-            if (result.TimedOut == false && result.ExitCode == 0 && result.StdOut.Contains("ffprobe version"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return result.TimedOut == false && result.ExitCode == 0 && result.StdOut.Contains("ffprobe version");
         }
 
-        public static async Task<bool> IsYtDlpOk()
+        public static async Task<bool> IsYtDlpOk(string rootPath)
         {
-            string ytdlpExe = Path.Combine(Settings.Default.ytdlpPathText, "yt-dlp.exe");
+            string ytdlpExe = Path.Combine(rootPath, "yt-dlp.exe");
 
-            if (!Directory.Exists(Settings.Default.ytdlpPathText) || !File.Exists(ytdlpExe))
+            if (!File.Exists(ytdlpExe))
             {
                 return false;
             }
 
             ProbeResult result = await RunProbe(ytdlpExe, "--version", 3000);
-            if (result.TimedOut == false && result.ExitCode == 0 && !String.IsNullOrEmpty(result.StdOut?.Trim()))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return result.TimedOut == false && result.ExitCode == 0 && !String.IsNullOrEmpty(result.StdOut?.Trim());
         }
 
         public async static Task<ProbeResult> RunProbe(string exePath, string args, int timeout)

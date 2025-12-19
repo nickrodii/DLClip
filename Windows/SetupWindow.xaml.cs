@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,71 +11,41 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
+using MessageBox = System.Windows.MessageBox;
 using Application = System.Windows.Application;
+using DLClip.Models;
+using ValidationResult = DLClip.Models.ValidationResult;
+using DLClip.Utils;
 
 namespace DLClip
 {
     /// <summary>
     /// Interaction logic for SetupWindow.xaml
+    /// 
+    /// Very similar to SettingsWindow, but has extra text to welcome the user
     /// </summary>
     public partial class SetupWindow : Window
     {
         public SetupWindow()
         {
             InitializeComponent();
-            ffmpegPathText2.Text = Settings.Default.ffmpegPathText;
-            ytdlpPathText2.Text = Settings.Default.ytdlpPathText;
+            ffmpegPathText2.Text = Settings.Default.ffmpegPath;
+            ytdlpPathText2.Text = Settings.Default.ytdlpPath;
         }
 
-        private void settingsApplyButton_Click(object sender, RoutedEventArgs e)
+        private async void settingsApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            // Folder / Binary validation
-            if (!Directory.Exists(ffmpegPathText2.Text))
-            {
-                MessageBox.Show("Directory provided for FFmpeg does not exist. Please specify a valid path to the root folder of FFmpeg's installation.", "Invalid Directory Error");
-                DialogResult = false;
-                return;
-            }
-            if (!Directory.Exists(Path.Combine(ffmpegPathText2.Text, "bin")))
-            {
-                MessageBox.Show("No bin folder found within the FFmpeg installation. Please specify a valid path to the root folder of FFmpeg's installation.", "No Bin Directory Error");
-                DialogResult = false;
-                return;
-            }
-            if (!File.Exists(Path.Combine(ffmpegPathText2.Text, "bin", "ffmpeg.exe")))
-            {
-                MessageBox.Show("No FFmpeg binary found within the bin folder. Reinstall FFmpeg or manually add the binary file to the bin folder.", "No FFmpeg Binary Error");
-                DialogResult = false;
-                return;
-            }
-            if (!File.Exists(Path.Combine(ffmpegPathText2.Text, "bin", "ffprobe.exe")))
+            ValidationResult ffmpegValid = await ValidationUtils.ValidateFfmpeg(ffmpegPathText2.Text);
+            if (!UiUtils.HandleValidation(ffmpegValid))
             {
                 DialogResult = false;
-                MessageBox.Show("No FFprobe binary found within the bin folder. Make sure to install the full FFmpeg package that includes FFprobe or manually add the binary file to the bin folder.", "No FFprobe Binary Error");
-                return;
-            }
-            Settings.Default.ffmpegPathText = ffmpegPathText2.Text;
-            Settings.Default.ffmpegPath = Path.Combine(ffmpegPathText2.Text, "bin");
-            Settings.Default.Save();
-
-            if (!Directory.Exists(ytdlpPathText2.Text))
-            {
-                MessageBox.Show("Directory provided for yt-dlp does not exist. Please specify a valid path to the root folder of yt-dlp's installation.\n\nImporting media from URL will be disabled until yt-dlp is properly installed.", "Invalid Directory Error");
-                DialogResult = true;
-                this.Close();
-                return;
-            }
-            if (!File.Exists(Path.Combine(ytdlpPathText2.Text, "yt-dlp.exe")))
-            {
-                MessageBox.Show("No yt-dlp binary found within the bin folder. Reinstall yt-dlp or manually add the binary file to the folder provided.\n\nImporting media from URL will be disabled until yt-dlp is properly installed.", "No yt-dlp Binary Error");
-                DialogResult = true;
-                this.Close();
                 return;
             }
 
-            Settings.Default.ytdlpPathText = ytdlpPathText2.Text;
+            ValidationResult ytdlpValid = await ValidationUtils.ValidateYtdlp(ytdlpPathText2.Text);
+            UiUtils.HandleValidation(ytdlpValid);
+            Settings.Default.ffmpegPath = ffmpegPathText2.Text;
             Settings.Default.ytdlpPath = ytdlpPathText2.Text;
             Settings.Default.Save();
             DialogResult = true;
@@ -115,6 +86,16 @@ namespace DLClip
         private void ytdlpPathText_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            UiUtils.OpenUrl("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip");
+        }
+
+        private void ytdlpDownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            UiUtils.OpenUrl("https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe");
         }
     }
 }

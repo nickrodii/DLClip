@@ -46,29 +46,5 @@ namespace DLClip {
                 this["ytdlpPath"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ffmpegPathText {
-            get {
-                return ((string)(this["ffmpegPathText"]));
-            }
-            set {
-                this["ffmpegPathText"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ytdlpPathText {
-            get {
-                return ((string)(this["ytdlpPathText"]));
-            }
-            set {
-                this["ytdlpPathText"] = value;
-            }
-        }
     }
 }

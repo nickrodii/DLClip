@@ -14,6 +14,9 @@ using System.Windows.Shapes;
 using Path = System.IO.Path;
 using MessageBox = System.Windows.MessageBox;
 using Application = System.Windows.Application;
+using DLClip.Models;
+using ValidationResult = DLClip.Models.ValidationResult;
+using DLClip.Utils;
 
 namespace DLClip
 {
@@ -25,57 +28,24 @@ namespace DLClip
         public SettingsWindow()
         {
             InitializeComponent();
-            ffmpegPathText.Text = Settings.Default.ffmpegPathText;
-            ytdlpPathText.Text = Settings.Default.ytdlpPathText;
+            ffmpegPathText.Text = Settings.Default.ffmpegPath;
+            ytdlpPathText.Text = Settings.Default.ytdlpPath;
         }
 
-        private void settingsApplyButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Folder / Binary validation
-            if (!Directory.Exists(ffmpegPathText.Text))
-            {
-                MessageBox.Show("Directory provided for FFmpeg does not exist. Please specify a valid path to the root folder of FFmpeg's installation.", "Invalid Directory Error");
-                DialogResult = false;
-                return;
-            }
-            if (!Directory.Exists(Path.Combine(ffmpegPathText.Text, "bin")))
-            {
-                MessageBox.Show("No bin folder found within the FFmpeg installation. Please specify a valid path to the root folder of FFmpeg's installation.", "No Bin Directory Error");
-                DialogResult = false;
-                return;
-            }
-            if (!File.Exists(Path.Combine(ffmpegPathText.Text, "bin", "ffmpeg.exe")))
-            {
-                MessageBox.Show("No FFmpeg binary found within the bin folder. Reinstall FFmpeg or manually add the binary file to the bin folder.", "No FFmpeg Binary Error");
-                DialogResult = false;
-                return;
-            }
-            if (!File.Exists(Path.Combine(ffmpegPathText.Text, "bin", "ffprobe.exe")))
-            {
-                MessageBox.Show("No FFprobe binary found within the bin folder. Make sure to install the full FFmpeg package that includes FFprobe or manually add the binary file to the bin folder.", "No FFprobe Binary Error");
-                DialogResult = false;
-                return;
-            }
-            Settings.Default.ffmpegPathText = ffmpegPathText.Text;
-            Settings.Default.ffmpegPath = Path.Combine(ffmpegPathText.Text, "bin");
-            Settings.Default.Save();
+        
 
-            if (!Directory.Exists(ytdlpPathText.Text))
+        private async void settingsApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            ValidationResult ffmpegValid = await ValidationUtils.ValidateFfmpeg(ffmpegPathText.Text);
+            if (!UiUtils.HandleValidation(ffmpegValid))
             {
-                MessageBox.Show("Directory provided for yt-dlp does not exist. Please specify a valid path to the root folder of yt-dlp's installation.\n\nImporting media from URL will be disabled until yt-dlp is properly installed.", "Invalid Directory Error");
                 DialogResult = false;
-                this.Close();
                 return;
             }
-            if (!File.Exists(Path.Combine(ytdlpPathText.Text, "yt-dlp.exe")))
-            {
-                MessageBox.Show("No yt-dlp binary found within the bin folder. Reinstall yt-dlp or manually add the binary file to the folder provided.\n\nImporting media from URL will be disabled until yt-dlp is properly installed.", "No yt-dlp Binary Error");
-                DialogResult = false;
-                this.Close();
-                return;
-            }
-            
-            Settings.Default.ytdlpPathText = ytdlpPathText.Text;
+                
+            ValidationResult ytdlpValid = await ValidationUtils.ValidateYtdlp(ytdlpPathText.Text);
+            UiUtils.HandleValidation(ytdlpValid);
+            Settings.Default.ffmpegPath = ffmpegPathText.Text;
             Settings.Default.ytdlpPath = ytdlpPathText.Text;
             Settings.Default.Save();
             DialogResult = true;

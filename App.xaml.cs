@@ -20,7 +20,8 @@ namespace DLClip
         protected async override void OnStartup(StartupEventArgs e)
         {
             // COMMENT / UNCOMMENT TO RESET SETTINGS
-            // DLClip.Settings.Default.Reset();
+            DLClip.Settings.Default.Reset();
+
             base.OnStartup(e);
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
@@ -54,9 +55,9 @@ namespace DLClip
 
         public async Task RefreshToolStatusAsync()
         {
-            FfmpegOk = await CLIUtils.IsFfmpegOk();
-            FfprobeOk = await CLIUtils.IsFfprobeOk();
-            YtdlpOk = await CLIUtils.IsYtDlpOk();
+            FfmpegOk = await CLIUtils.IsFfmpegOk(Settings.Default.ffmpegPath);
+            FfprobeOk = await CLIUtils.IsFfprobeOk(Settings.Default.ffmpegPath);
+            YtdlpOk = await CLIUtils.IsYtDlpOk(Settings.Default.ytdlpPath);
 
             ToolStatusChanged?.Invoke(this, EventArgs.Empty);
         }
