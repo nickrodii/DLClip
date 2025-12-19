@@ -1,4 +1,4 @@
-﻿namespace DLClip
+﻿namespace DLClip.Utils
 {
     class FormatUtils
     {

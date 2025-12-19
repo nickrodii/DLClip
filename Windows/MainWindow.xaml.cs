@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using DLClip;
+using DLClip.Utils;
+using Microsoft.Win32;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,12 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.IO;
-using Microsoft.Win32;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
-using MessageBox = System.Windows.MessageBox;
 using Application = System.Windows.Application;
-
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Path = System.IO.Path;
 
 namespace DLClip
@@ -23,19 +24,38 @@ namespace DLClip
     /// </summary>
     public partial class MainWindow : Window
     {
+
         bool isVideo;
         bool isLoaded = false;
         bool usingURL;
         bool isAudioOnly;
-        // for app references (App)Application.Current;
-        // ((App)Application.Current).YtDlpInstalled
 
         public MainWindow()
         {
             InitializeComponent();
-            if (!((App)Application.Current).ytdlpInstalled)
+        }
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var app = ((App)Application.Current);
+
+            await app.RefreshToolStatusAsync();
+            if (!app.YtdlpOk)
             {
+                useURLCheckbox.IsChecked = false;
                 useURLCheckbox.IsEnabled = false;
+            }
+            else
+            {
+                useURLCheckbox.IsEnabled = true;
+            }
+            if (!app.FfmpegOk || !app.FfprobeOk)
+            {
+                bool ok = await app.ForceSetupAsync();
+                if (!ok)
+                {
+                    app.Shutdown();
+                    return;
+                }
             }
         }
 
@@ -60,18 +80,25 @@ namespace DLClip
                 inputText.Text = openFile.FileName;
                 inputFormatLabel.Content = Path.GetExtension(inputText.Text);
                 if (FormatUtils.IsVideoFormat(Path.GetExtension(inputText.Text))) { isVideo = true; } else { isVideo = false; }
-            } else
+            }
+            else
             {
                 inputText.Text = "";
             }
         }
 
-        private void loadButton_Click(object sender, RoutedEventArgs e)
+        private async void loadButton_Click(object sender, RoutedEventArgs e)
         {
+            var app = ((App)Application.Current);
+
             if (!isLoaded)
             {
                 loadedLabel.Content = "Parsing file info...";
 
+                bool toolsOk = await app.ForceSetupAsync();
+                usingURL = useURLCheckbox.IsChecked == true;
+
+                if (!toolsOk) { MessageBox.Show("The CLI tools are not working properly. Please reinstall FFmpeg.", "CLI Tools Error"); return; }
                 // Loading process begins
 
                 if (!usingURL)
@@ -79,14 +106,24 @@ namespace DLClip
                     if (string.IsNullOrWhiteSpace(inputText.Text) || !File.Exists(inputText.Text))
                     {
                         loadedLabel.Content = "Not loaded yet...";
-                        MessageBox.Show("Please enter a valid video or audio file path. Select \"Choose File...\" to find one.","File Path Error");
+                        MessageBox.Show("Please enter a valid video or audio file path. Select \"Choose File...\" to find one.", "File Path Error");
                         return;
                     }
 
                     if (!FormatUtils.IsValidFormat(Path.GetExtension(inputText.Text)))
                     {
                         loadedLabel.Content = "Not loaded yet...";
-                        MessageBox.Show("Please use a valid video or audio format. Formats include: .mp4, .mkv, .mov, .webm, .avi, .flv, .gif, .mp3, .wav, .flac, .m4a, .ogg, .opus","File Path Error");
+                        MessageBox.Show("Please use a valid video or audio format. Formats include: .mp4, .mkv, .mov, .webm, .avi, .flv, .gif, .mp3, .wav, .flac, .m4a, .ogg, .opus", "File Path Error");
+                        return;
+                    }
+                }
+                else
+                {
+                    if (!app.YtdlpOk)
+                    {
+                        MessageBox.Show("yt-dlp is not working properly. Please reinstall yt-dlp to import from URL.", "CLI Tools Error");
+                        useURLCheckbox.IsChecked = false;
+                        useURLCheckbox.IsEnabled = false;
                         return;
                     }
                 }
@@ -115,7 +152,8 @@ namespace DLClip
 
                 isLoaded = true;
                 loadedLabel.Content = "Successfully loaded!";
-            } else
+            }
+            else
             {
                 // if it is BEING UNLOADED
 
@@ -125,7 +163,8 @@ namespace DLClip
 
                 inputText.IsEnabled = true;
                 chooseFileButton.IsEnabled = true;
-                if (((App)Application.Current).ytdlpInstalled) { useURLCheckbox.IsEnabled = true; }
+                await app.RefreshToolStatusAsync();
+                if (app.YtdlpOk) { useURLCheckbox.IsEnabled = true; }
                 extractAudioCheckbox.IsEnabled = true;
                 loadButton.Content = "Load Media";
 
@@ -148,25 +187,38 @@ namespace DLClip
                 isLoaded = false;
                 loadedLabel.Content = "Not loaded yet...";
             }
-            
+
         }
 
-        private void settingsButton_Click(object sender, object e)
+        private async void settingsButton_Click(object sender, object e)
         {
+            var app = ((App)Application.Current);
+
             SettingsWindow settings = new SettingsWindow();
             settings.ShowDialog();
-            ((App)Application.Current).ytdlpInstalled = File.Exists(Path.Combine(Settings.Default.ytdlpPath, "yt-dlp.exe"));
-
-            if (!((App)Application.Current).ytdlpInstalled)
+            if (settings.DialogResult == true)
             {
-
-                useURLCheckbox.IsChecked = false;
-                useURLCheckbox.IsEnabled = false;
-            } else
-            {
-                if (loadedLabel.Content.Equals("Not loaded yet..."))
+                await app.RefreshToolStatusAsync();
+                if (!app.FfmpegOk || !app.FfprobeOk)
                 {
-                    useURLCheckbox.IsEnabled = true;
+                    bool ok = await app.ForceSetupAsync();
+                    if (!ok)
+                    {
+                        app.Shutdown();
+                        return;
+                    }
+                }
+                if (!app.YtdlpOk)
+                {
+                    useURLCheckbox.IsChecked = false;
+                    useURLCheckbox.IsEnabled = false;
+                }
+                else
+                {
+                    if (loadedLabel.Content.Equals("Not loaded yet..."))
+                    {
+                        useURLCheckbox.IsEnabled = true;
+                    }
                 }
             }
         }

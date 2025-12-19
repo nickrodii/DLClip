@@ -4,6 +4,7 @@ using System.Windows;
 using Application = System.Windows.Application;
 using System.IO;
 using Path = System.IO.Path;
+using DLClip.Utils;
 
 namespace DLClip
 {
@@ -12,21 +13,20 @@ namespace DLClip
     /// </summary>
     public partial class App : System.Windows.Application
     {
-
-        public bool ytdlpInstalled = false;
-        public bool ffmpegInstalled = false;
-        protected override void OnStartup(StartupEventArgs e)
+        public bool FfmpegOk { get; set; }
+        public bool FfprobeOk { get; set; }
+        public bool YtdlpOk { get; set; }
+        public event EventHandler? ToolStatusChanged;
+        protected async override void OnStartup(StartupEventArgs e)
         {
             // COMMENT / UNCOMMENT TO RESET SETTINGS
-            DLClip.Settings.Default.Reset();
+            // DLClip.Settings.Default.Reset();
             base.OnStartup(e);
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            // update booleans
-            ffmpegInstalled = File.Exists(Path.Combine(Settings.Default.ffmpegPath, "bin", "ffmpeg.exe")) || File.Exists(Path.Combine(Settings.Default.ffmpegPath, "bin", "ffprobe.exe"));
-            ytdlpInstalled = File.Exists(Path.Combine(Settings.Default.ytdlpPath, "yt-dlp.exe"));
+            await RefreshToolStatusAsync();
 
-            if (ffmpegInstalled == false)
+            if (!FfmpegOk || !FfprobeOk)
             {
                 SetupWindow setup = new SetupWindow();
                 bool? result = setup.ShowDialog();
@@ -51,6 +51,35 @@ namespace DLClip
             main.Show();
             Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
-    }
 
+        public async Task RefreshToolStatusAsync()
+        {
+            FfmpegOk = await CLIUtils.IsFfmpegOk();
+            FfprobeOk = await CLIUtils.IsFfprobeOk();
+            YtdlpOk = await CLIUtils.IsYtDlpOk();
+
+            ToolStatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public async Task<bool> ForceSetupAsync()
+        {
+            await RefreshToolStatusAsync();
+            if (FfmpegOk && FfprobeOk)
+            {
+                return true;
+            }
+            
+            SetupWindow setupWindow = new SetupWindow();
+            bool? dialogResult = setupWindow.ShowDialog();
+
+            if (dialogResult != true)
+            {
+                return false;
+            }
+
+                await RefreshToolStatusAsync();
+            return FfmpegOk && FfprobeOk;
+        }
+    }
 }
+

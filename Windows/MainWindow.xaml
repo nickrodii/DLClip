@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DLClip"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" ResizeMode="NoResize">
+        Title="MainWindow" Height="600" Width="800" ResizeMode="NoResize"
+        Loaded="MainWindow_Loaded">
     <Grid Background="White" Margin="0,0,0,-6" Height="600">
         <Grid.RowDefinitions>
             <RowDefinition Height="48*"/>

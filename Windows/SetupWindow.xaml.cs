@@ -74,6 +74,7 @@ namespace DLClip
                 return;
             }
 
+            Settings.Default.ytdlpPathText = ytdlpPathText2.Text;
             Settings.Default.ytdlpPath = ytdlpPathText2.Text;
             Settings.Default.Save();
             DialogResult = true;
