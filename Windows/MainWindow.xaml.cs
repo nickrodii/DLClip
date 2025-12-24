@@ -28,7 +28,7 @@ namespace DLClip
         bool isVideo;
         bool isLoaded = false;
         bool isAudioOnly;
-
+        private bool _isUpdatingTrimLength = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,7 +38,7 @@ namespace DLClip
             var app = ((App)Application.Current);
 
             await app.RefreshToolStatusAsync();
-            UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, isLoaded, app.YtdlpOk);
+            UiUtils.SetLoadedUiState(false, importBox, trimLengthBox, videoOptionsBox, outputBox, loadButton, loadedLabel, useURLCheckbox, filenameText, runButton);
 
             if (!app.FfmpegOk || !app.FfprobeOk)
             {
@@ -76,69 +76,32 @@ namespace DLClip
 
         private async void loadButton_Click(object sender, RoutedEventArgs e)
         {
-            bool usingURL = (useURLCheckbox.IsChecked == true);
             var app = ((App)Application.Current);
+
+            bool usingURL = (useURLCheckbox.IsChecked == true);
+            bool ytdlpOk = app.YtdlpOk;
 
             if (!isLoaded)
             {
                 loadedLabel.Content = "Parsing file info...";
+                if (!(await app.ForceSetupAsync())) { loadedLabel.Content = "Not loaded yet..."; return; } // if tools arent ok, fail
+                ytdlpOk = app.YtdlpOk; 
+                usingURL = (useURLCheckbox.IsChecked == true);
 
-                bool toolsOk = await app.ForceSetupAsync();
-                usingURL = useURLCheckbox.IsChecked == true;
-
-                if (!toolsOk) { MessageBox.Show("The CLI tools are not working properly. Please reinstall FFmpeg.", "CLI Tools Error"); return; }
-                // Loading process begins
-
-                if (!usingURL)
+                // validate file path input
+                var validationResult = ValidationUtils.ValidateLoadRequest(inputText.Text, usingURL, ytdlpOk);
+                if (validationResult.Severity != Models.ValidationSeverity.Success)
                 {
-                    if (string.IsNullOrWhiteSpace(inputText.Text) || !File.Exists(inputText.Text))
-                    {
-                        loadedLabel.Content = "Not loaded yet...";
-                        MessageBox.Show("Please enter a valid video or audio file path. Select \"Choose File...\" to find one.", "File Path Error");
-                        return;
-                    }
+                    UiUtils.HandleValidation(validationResult);
+                    loadedLabel.Content = "Not loaded yet..."; 
+                    return;
+                }
 
-                    if (!FormatUtils.IsValidFormat(Path.GetExtension(inputText.Text)))
-                    {
-                        loadedLabel.Content = "Not loaded yet...";
-                        MessageBox.Show("Please use a valid video or audio format. Formats include: .mp4, .mkv, .mov, .webm, .avi, .flv, .gif, .mp3, .wav, .flac, .m4a, .ogg, .opus", "File Path Error");
-                        return;
-                    }
-                }
-                else
-                {
-                    if (!app.YtdlpOk)
-                    {
-                        MessageBox.Show("yt-dlp is not working properly. Please reinstall yt-dlp to import from URL.", "Error: Executable not running properly");
-                        UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, false, false);
-                        return;
-                    }
-                }
+                // ffprobe stuff to fill out all the boxes with stuff, yt-dlp to probe url info if using url
 
                 // Loading finishes successfully
-
-                inputText.IsEnabled = false;
-                chooseFileButton.IsEnabled = false;
-                UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, true, app.YtdlpOk);
-                extractAudioCheckbox.IsEnabled = false;
-                loadButton.Content = "Unload Media";
-
-                startTime.IsEnabled = true;
-                startTimeSlider.IsEnabled = true;
-                endTime.IsEnabled = true;
-                endTimeSlider.IsEnabled = true;
-
-                resolutionSelections.IsEnabled = true;
-                FPSSelections.IsEnabled = true;
-                bitrateSelections.IsEnabled = true;
-
-                formatSelections.IsEnabled = true;
-                codecSelections.IsEnabled = true;
-                filenameText.IsEnabled = true;
-                runButton.IsEnabled = true;
-
                 isLoaded = true;
-                loadedLabel.Content = "Successfully loaded!";
+                UiUtils.SetLoadedUiState(true, importBox, trimLengthBox, videoOptionsBox, outputBox, loadButton, loadedLabel, useURLCheckbox, filenameText, runButton);
             }
             else
             {
@@ -146,33 +109,10 @@ namespace DLClip
 
                 loadedLabel.Content = "Unloading...";
 
-                // Unoading finishes successfully
-
-                inputText.IsEnabled = true;
-                chooseFileButton.IsEnabled = true;
-                await app.RefreshToolStatusAsync();
-                UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, false, app.YtdlpOk);
-                extractAudioCheckbox.IsEnabled = true;
-                loadButton.Content = "Load Media";
-
-                filenameText.Text = "";
-
-                startTime.IsEnabled = false;
-                startTimeSlider.IsEnabled = false;
-                endTime.IsEnabled = false;
-                endTimeSlider.IsEnabled = false;
-
-                resolutionSelections.IsEnabled = false;
-                FPSSelections.IsEnabled = false;
-                bitrateSelections.IsEnabled = false;
-
-                formatSelections.IsEnabled = false;
-                codecSelections.IsEnabled = false;
-                filenameText.IsEnabled = false;
-                runButton.IsEnabled = false;
+                // Unloading finishes successfully
 
                 isLoaded = false;
-                loadedLabel.Content = "Not loaded yet...";
+                UiUtils.SetLoadedUiState(false, importBox, trimLengthBox, videoOptionsBox, outputBox, loadButton, loadedLabel, useURLCheckbox, filenameText, runButton);
             }
 
         }
@@ -183,20 +123,91 @@ namespace DLClip
 
             SettingsWindow settings = new SettingsWindow();
             settings.ShowDialog();
-            if (settings.DialogResult == true)
+            await app.RefreshToolStatusAsync();
+            if (!app.FfmpegOk || !app.FfprobeOk)
             {
-                await app.RefreshToolStatusAsync();
-                if (!app.FfmpegOk || !app.FfprobeOk)
+                bool ok = await app.ForceSetupAsync();
+                if (!ok)
                 {
-                    bool ok = await app.ForceSetupAsync();
-                    if (!ok)
-                    {
-                        app.Shutdown();
-                        return;
-                    }
+                    app.Shutdown();
+                    return;
                 }
-                UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, isLoaded, app.YtdlpOk);
             }
+            UiUtils.UpdateUrlAvailabilityUi(useURLCheckbox, isLoaded, app.YtdlpOk);
+        }
+
+        private void startTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_isUpdatingTrimLength) return;
+            _isUpdatingTrimLength = true;
+
+            if (startTimeSlider.Value > endTimeSlider.Value)
+            {
+                endTimeSlider.Value = startTimeSlider.Value;
+            }
+
+            startTime.Text = TimeUtils.FormatSecondsToTime((int)Math.Round(startTimeSlider.Value));
+            inputLengthLabel.Content = TimeUtils.FormatSecondsToTime((int)Math.Round(endTimeSlider.Value - startTimeSlider.Value));
+            _isUpdatingTrimLength = false;
+        }
+
+        private void endTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_isUpdatingTrimLength) return;
+            _isUpdatingTrimLength = true;
+
+            if (endTimeSlider.Value < startTimeSlider.Value)
+            {
+                startTimeSlider.Value = endTimeSlider.Value;
+            }
+
+            endTime.Text = TimeUtils.FormatSecondsToTime((int)Math.Round(endTimeSlider.Value));
+            inputLengthLabel.Content = TimeUtils.FormatSecondsToTime((int)Math.Round(endTimeSlider.Value - startTimeSlider.Value));
+            _isUpdatingTrimLength = false;
+        }
+
+        private void startTime_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (_isUpdatingTrimLength) return;
+            _isUpdatingTrimLength = true;
+            int parsed = TimeUtils.FormatTimeToSeconds(startTime.Text);
+            if (parsed == -1)
+            {
+                startTime.Text = TimeUtils.FormatSecondsToTime((int)Math.Round(startTimeSlider.Value));
+                _isUpdatingTrimLength = false;
+                return;
+            }
+            startTimeSlider.Value = parsed;
+
+            if (startTimeSlider.Value > endTimeSlider.Value)
+            {
+                endTimeSlider.Value = startTimeSlider.Value;
+            }
+
+            inputLengthLabel.Content = TimeUtils.FormatSecondsToTime((int)Math.Round(endTimeSlider.Value - startTimeSlider.Value));
+            _isUpdatingTrimLength = false;
+        }
+
+        private void endTime_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (_isUpdatingTrimLength) return;
+            _isUpdatingTrimLength = true;
+            int parsed = TimeUtils.FormatTimeToSeconds(endTime.Text);
+            if (parsed == -1)
+            {
+                endTime.Text = TimeUtils.FormatSecondsToTime((int)Math.Round(endTimeSlider.Value));
+                _isUpdatingTrimLength = false;
+                return;
+            }
+            endTimeSlider.Value = parsed;
+
+            if (endTimeSlider.Value < startTimeSlider.Value)
+            {
+                startTimeSlider.Value = endTimeSlider.Value;
+            }
+
+            inputLengthLabel.Content = TimeUtils.FormatSecondsToTime((int)Math.Round(endTimeSlider.Value - startTimeSlider.Value));
+            _isUpdatingTrimLength = false;
         }
     }
 }

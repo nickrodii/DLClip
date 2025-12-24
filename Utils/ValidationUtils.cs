@@ -3,6 +3,23 @@ using System.IO;
 using DLClip.Models;
 using ValidationResult = DLClip.Models.ValidationResult;
 using System.Threading.Tasks;
+using DLClip;
+using DLClip.Utils;
+using Microsoft.Win32;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using Path = System.IO.Path;
 
 namespace DLClip.Utils
 {
@@ -84,5 +101,38 @@ namespace DLClip.Utils
             return ValidationResult.Success();
 
         }
+
+        public static ValidationResult ValidateLoadRequest(string inputPath, bool usingURL, bool ytdlpOk)
+        {
+            // LOCAL FILE MODE
+            if (!usingURL)
+            {
+                if (string.IsNullOrWhiteSpace(inputPath) || !File.Exists(inputPath))
+                {
+                    return ValidationResult.Failure("Please enter a valid video or audio file path. Select \"Choose File...\" to find one.", "Error: File path doesn't exist");
+                }
+
+                if (!FormatUtils.IsValidFormat(Path.GetExtension(inputPath)))
+                {
+                    return ValidationResult.Failure("Please use a valid video or audio format. Formats include: .mp4, .mkv, .mov, .webm, .avi, .flv, .gif, .mp3, .wav, .flac, .m4a, .ogg, .opus", "Error: Invalid media format");
+                }
+
+                return ValidationResult.Success();
+            }
+
+            // URL MODE
+            else
+            {
+                if (!ytdlpOk) { return ValidationResult.Failure("yt-dlp is not configured properly. Please configure the yt-dlp installation path to be able to import from URL.", "Error: yt-dlp not configured"); }
+
+                if (string.IsNullOrWhiteSpace(inputPath))
+                {
+                    return ValidationResult.Failure("Please enter a valid media URL.", "Error: URL not specified");
+                }
+
+                return ValidationResult.Success();
+            }
+        }
     }
+
 }

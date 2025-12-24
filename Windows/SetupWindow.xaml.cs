@@ -39,7 +39,6 @@ namespace DLClip
             ValidationResult ffmpegValid = await ValidationUtils.ValidateFfmpeg(ffmpegPathText2.Text);
             if (!UiUtils.HandleValidation(ffmpegValid))
             {
-                DialogResult = false;
                 return;
             }
 

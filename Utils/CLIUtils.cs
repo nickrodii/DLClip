@@ -113,5 +113,14 @@ namespace DLClip.Utils
                 process.Dispose();
             }
         }
+
+        public async static Task<ProbeResult> RunProbe(string exePath, IEnumerable<string> flags, string input, int timeout)
+        {
+            string args = String.Join(" ", flags);
+            string together = args + " \"" + input + "\"";
+            return await RunProbe(exePath, together, timeout);
+        }
+
+
     }
 }

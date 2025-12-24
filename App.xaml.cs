@@ -19,8 +19,7 @@ namespace DLClip
         public event EventHandler? ToolStatusChanged;
         protected async override void OnStartup(StartupEventArgs e)
         {
-            // COMMENT / UNCOMMENT TO RESET SETTINGS
-            DLClip.Settings.Default.Reset();
+            // DLClip.Settings.Default.Reset(); // UNCOMMENT TO RESET SETTINGS
 
             base.OnStartup(e);
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -78,7 +77,7 @@ namespace DLClip
                 return false;
             }
 
-                await RefreshToolStatusAsync();
+            await RefreshToolStatusAsync();
             return FfmpegOk && FfprobeOk;
         }
     }
