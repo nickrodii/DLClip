@@ -113,7 +113,7 @@ namespace DLClip.Utils
             startTime.Text = TimeUtils.FormatSecondsToTime((int)Math.Round(defaults.StartSeconds));
             endTime.Text = TimeUtils.FormatSecondsToTime((int)Math.Round(defaults.EndSeconds));
             double lengthValue = defaults.EndSeconds - defaults.StartSeconds;
-            length.Content = $"Length: {TimeUtils.FormatSecondsToTime((int)Math.Round(lengthValue))}";
+            length.Content = TimeUtils.FormatSecondsToTime((int)Math.Round(lengthValue));
         }
     }
 }
