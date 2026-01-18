@@ -15,7 +15,7 @@
 
 ## Overview
 
-**DLClip** is a Windows desktop application built with .NET and WPF that provides a user-friendly GUI for FFmpeg and yt-dlp, eliminating the use of the terminal, allowing many common Windows users utilize FFmpeg and yt-dlp's features.
+**DLClip** is a Windows desktop application built in C# with .NET and WPF that provides a user-friendly GUI for FFmpeg and yt-dlp, eliminating the use of the terminal, allowing many common Windows users utilize FFmpeg and yt-dlp's features.
 
 ## Key Features
 
